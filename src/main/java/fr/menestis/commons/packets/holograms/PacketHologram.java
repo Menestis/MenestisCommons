@@ -38,7 +38,7 @@ public class PacketHologram {
      */
     public PacketHologram(Location location, String... strings) {
         this.hologramText = Arrays.asList(strings);
-        this.hologramLocation = location.add(0, 0.40D, 0);
+        this.hologramLocation = location.clone().add(0, 0.40D, 0);
         this.name = "hologram_" + i;
         i++;
         this.cuboid = new Cuboid(location.clone().add(50, 50, 50), location.clone().subtract(50, 50, 50));
