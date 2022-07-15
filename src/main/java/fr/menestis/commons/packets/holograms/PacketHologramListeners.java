@@ -7,6 +7,7 @@ import fr.menestis.commons.packets.injection.listener.PacketListener;
 import fr.menestis.commons.packets.injection.manager.PacketManager;
 import net.minecraft.server.v1_8_R3.EntitySlime;
 import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;

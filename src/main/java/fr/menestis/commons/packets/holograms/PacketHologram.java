@@ -1,7 +1,6 @@
 package fr.menestis.commons.packets.holograms;
 
 import fr.menestis.commons.bukkit.Cuboid;
-import fr.menestis.commons.packets.PacketUtils;
 import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.bukkit.Bukkit;
@@ -155,13 +154,13 @@ public class PacketHologram {
 
     public void removePlayer(Player player) {
         this.playersThatShouldSeeHologram.remove(player.getUniqueId());
+        this.playerSeeingHologram.remove(player.getUniqueId());
     }
 
     public void updateLine(int line, Player player) {
         EntityArmorStand entityArmorStand = armorStandMap.get(line);
 
         PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(entityArmorStand.getId(), entityArmorStand.getDataWatcher(), true);
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(metadata);
     }
 
     public void updateLine(int line) {
@@ -169,7 +168,12 @@ public class PacketHologram {
         //  Location location = entityArmorStand.getBukkitEntity().getLocation();
 
         PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(entityArmorStand.getId(), entityArmorStand.getDataWatcher(), true);
-        PacketUtils.broadcastPacket(metadata);
+        for (UUID uuid : playerSeeingHologram) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                ((CraftPlayer) player).getHandle().playerConnection.sendPacket(metadata);
+            }
+        }
     }
 
     public void updateHologram(Player player) {
@@ -178,9 +182,12 @@ public class PacketHologram {
     }
 
     public void updateHologram() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            hide(player);
-            show(player);
+        for (UUID uuid : new ArrayList<>(playerSeeingHologram)) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                hide(player);
+                show(player);
+            }
         }
     }
 

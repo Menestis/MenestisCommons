@@ -67,7 +67,7 @@ public class PacketHologramManager {
                     //les joueurs qui le voient pas (pas dans seeing) et dans la zone = show
                     for (UUID uuid : packetHologram.getPlayersThatShouldSeeHologram()) {
                         Player player = Bukkit.getPlayer(uuid);
-                        if (player == null) {
+                        if (player == null || player.getLocation() == null) {
                             continue;
                         }
                         //cas 1
