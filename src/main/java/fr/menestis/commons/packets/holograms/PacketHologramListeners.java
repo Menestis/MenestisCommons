@@ -31,25 +31,25 @@ public class PacketHologramListeners implements Listener, PacketListener {
     //TODO retirer quand on aura compris ce truc de double packet de mort
     private final Map<UUID, Long> uuidLongMap = new HashMap<>();
 
-    public PacketHologramListeners(){
+    public PacketHologramListeners() {
         PacketManager.getInstance().register(this);
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent playerJoinEvent){
-        PacketHologramManager.getInstance().getHologramMap().values().stream().filter(PacketHologram::isGlobal).forEach(packetHologram -> packetHologram.show(playerJoinEvent.getPlayer()));
+    public void onJoin(PlayerJoinEvent playerJoinEvent) {
+        PacketHologramManager.getInstance().getHologramMap().values().stream().filter(PacketHologram::isGlobal).forEach(packetHologram -> packetHologram.addPlayer(playerJoinEvent.getPlayer()));
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent playerQuitEvent){
+    public void onQuit(PlayerQuitEvent playerQuitEvent) {
         for (PacketHologram value : PacketHologramManager.getInstance().getHologramMap().values()) {
-            value.getPlayers().remove(playerQuitEvent.getPlayer().getName());
+            value.removePlayer(playerQuitEvent.getPlayer());
         }
     }
 
     @EventHandler
-    public void onDamage(EntityDamageEvent entityDamageEvent){
-        if(entityDamageEvent.getEntity() instanceof Slime && entityDamageEvent.getEntity().hasMetadata("hologramName"))
+    public void onDamage(EntityDamageEvent entityDamageEvent) {
+        if (entityDamageEvent.getEntity() instanceof Slime && entityDamageEvent.getEntity().hasMetadata("hologramName"))
             entityDamageEvent.setCancelled(true);
 
     }
@@ -58,15 +58,15 @@ public class PacketHologramListeners implements Listener, PacketListener {
     public void onPacket(final PacketModel packetModel) {
         PacketPlayInUseEntity packetPlayInUseEntity = ((PacketPlayInUseEntity) packetModel.getPacket());
         Player player = packetModel.getPlayer();
-        if(packetPlayInUseEntity.a(((CraftWorld) player.getWorld()).getHandle()) != null)
+        if (packetPlayInUseEntity.a(((CraftWorld) player.getWorld()).getHandle()) != null)
             return;
 
         UUID uuid = player.getUniqueId();
 
-        if(!uuidLongMap.containsKey(uuid)){
+        if (!uuidLongMap.containsKey(uuid)) {
             uuidLongMap.putIfAbsent(uuid, System.currentTimeMillis());
         } else {
-            if(System.currentTimeMillis() - uuidLongMap.get(uuid) < 50){
+            if (System.currentTimeMillis() - uuidLongMap.get(uuid) < 50) {
                 return;
             } else {
                 uuidLongMap.put(uuid, System.currentTimeMillis());
@@ -74,17 +74,17 @@ public class PacketHologramListeners implements Listener, PacketListener {
         }
 
         int packetEntityId = this.entityIdField.get(packetPlayInUseEntity);
-        if(!PacketHologramManager.getInstance().getIdToSlimeMap().containsKey(packetEntityId))
+        if (!PacketHologramManager.getInstance().getIdToSlimeMap().containsKey(packetEntityId))
             return;
 
 
         EntitySlime entity = PacketHologramManager.getInstance().getIdToSlimeMap().get(packetEntityId);
 
-        if(entity.getBukkitEntity().hasMetadata("hologramName")){
+        if (entity.getBukkitEntity().hasMetadata("hologramName")) {
             String holoName = (entity.getBukkitEntity().getMetadata("hologramName").get(0)).asString();
             int line = Integer.parseInt(holoName.split("@")[1]);
             PacketHologram holo = PacketHologramManager.getInstance().getHologramFromName(holoName.split("@")[0]);
-            if(holo.getCallback(line) != null)
+            if (holo.getCallback(line) != null)
                 holo.getCallback(line).accept(player, holo, line);
         }
     }

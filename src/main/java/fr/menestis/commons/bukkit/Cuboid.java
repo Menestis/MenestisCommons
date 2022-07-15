@@ -10,9 +10,9 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 public class Cuboid implements Cloneable, ConfigurationSerializable, Iterable<Block> {
-    protected String worldName;
     protected final Vector minimumPoint;
     protected final Vector maximumPoint;
+    protected String worldName;
 
     public Cuboid(Cuboid cuboid) {
         this(cuboid.worldName, cuboid.minimumPoint.getX(), cuboid.minimumPoint.getY(), cuboid.minimumPoint.getZ(), cuboid.maximumPoint.getX(), cuboid.maximumPoint.getY(), cuboid.maximumPoint.getZ());
@@ -56,6 +56,22 @@ public class Cuboid implements Cloneable, ConfigurationSerializable, Iterable<Bl
         double zPos2 = Math.max(z1, z2);
         this.minimumPoint = new Vector(xPos1, yPos1, zPos1);
         this.maximumPoint = new Vector(xPos2, yPos2, zPos2);
+    }
+
+    public static Cuboid deserialize(Map<String, Object> serializedCuboid) {
+        try {
+            String worldName = (String) serializedCuboid.get("worldName");
+            double xPos1 = ((Double) serializedCuboid.get("x1")).doubleValue();
+            double xPos2 = ((Double) serializedCuboid.get("x2")).doubleValue();
+            double yPos1 = ((Double) serializedCuboid.get("y1")).doubleValue();
+            double yPos2 = ((Double) serializedCuboid.get("y2")).doubleValue();
+            double zPos1 = ((Double) serializedCuboid.get("z1")).doubleValue();
+            double zPos2 = ((Double) serializedCuboid.get("z2")).doubleValue();
+            return new Cuboid(worldName, xPos1, yPos1, zPos1, xPos2, yPos2, zPos2);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     public boolean containsLocation(Location location) {
@@ -148,21 +164,5 @@ public class Cuboid implements Cloneable, ConfigurationSerializable, Iterable<Bl
         serializedCuboid.put("z1", Double.valueOf(this.minimumPoint.getZ()));
         serializedCuboid.put("z2", Double.valueOf(this.maximumPoint.getZ()));
         return serializedCuboid;
-    }
-
-    public static Cuboid deserialize(Map<String, Object> serializedCuboid) {
-        try {
-            String worldName = (String)serializedCuboid.get("worldName");
-            double xPos1 = ((Double)serializedCuboid.get("x1")).doubleValue();
-            double xPos2 = ((Double)serializedCuboid.get("x2")).doubleValue();
-            double yPos1 = ((Double)serializedCuboid.get("y1")).doubleValue();
-            double yPos2 = ((Double)serializedCuboid.get("y2")).doubleValue();
-            double zPos1 = ((Double)serializedCuboid.get("z1")).doubleValue();
-            double zPos2 = ((Double)serializedCuboid.get("z2")).doubleValue();
-            return new Cuboid(worldName, xPos1, yPos1, zPos1, xPos2, yPos2, zPos2);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
     }
 }

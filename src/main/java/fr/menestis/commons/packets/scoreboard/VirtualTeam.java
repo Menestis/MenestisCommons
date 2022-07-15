@@ -26,7 +26,7 @@ public class VirtualTeam {
     }
 
     private PacketPlayOutScoreboardTeam createPacket(PacketMode packetMode, List<String> players) {
-        if(players == null)
+        if (players == null)
             players = new ArrayList<>();
 
         PacketPlayOutScoreboardTeam packet = new PacketPlayOutScoreboardTeam();
