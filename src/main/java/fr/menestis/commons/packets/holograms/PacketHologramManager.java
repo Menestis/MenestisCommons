@@ -2,8 +2,12 @@ package fr.menestis.commons.packets.holograms;
 
 import net.minecraft.server.v1_8_R3.EntitySlime;
 import net.minecraft.server.v1_8_R3.MobEffect;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +49,22 @@ public class PacketHologramManager {
      */
     public void init(JavaPlugin javaPlugin){
         this.javaPlugin = javaPlugin;
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (PacketHologram packetHologram : getHologramMap().values()) {
+                    for(Player player : Bukkit.getOnlinePlayers()){
+                        if(packetHologram.getPlayers().contains(player.getName()) && packetHologram.getPlayersGlobalList().contains(player.getName()) && !packetHologram.getCuboid().containsLocation(player.getLocation())){
+                            packetHologram.hideTemporarly(player);
+                        } else if(!packetHologram.getPlayers().contains(player.getName()) && packetHologram.getPlayersGlobalList().contains(player.getName()) && packetHologram.getCuboid().containsLocation(player.getLocation())){
+                            packetHologram.show(player);
+                        }
+                    }
+                }
+            }
+        }.runTaskTimerAsynchronously(javaPlugin, 50, 50);
+
     }
 
     public JavaPlugin getBukkit() {

@@ -1,11 +1,13 @@
 package fr.menestis.commons.packets.holograms;
 
+import fr.menestis.commons.bukkit.Cuboid;
 import fr.menestis.commons.packets.PacketUtils;
 import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -22,9 +24,12 @@ public class PacketHologram {
     private final Map<Integer, EntityArmorStand> armorStandMap = new HashMap<>();
     private final Map<Integer, EntitySlime> slimeMap = new HashMap<>();
     private final Location hologramLocation;
+    private final Cuboid cuboid;
     private int count;
     private boolean global;
     private final Map<Integer, TriConsumer<Player, PacketHologram, Integer>> integerTriConsumerMap = new HashMap<>();
+    private final List<String> playersActualList = new ArrayList<>();
+    private final List<String> playersGlobalList = new ArrayList<>();
 
     /**
      * Create the hologram
@@ -35,6 +40,7 @@ public class PacketHologram {
         this.hologramText = Arrays.asList(strings);
         this.hologramLocation = location.add(0, 0.40D, 0);
         this.name = "hologram_" + new Random().nextInt(9999);
+        this.cuboid = new Cuboid(location.clone().add(50, 50, 50), location.clone().subtract(50, 50, 50));
     }
 
     public PacketHologram build(){
@@ -89,6 +95,9 @@ public class PacketHologram {
     public boolean isGlobal(){ return this.global; }
 
     public void show(Player player){
+        if(playersActualList.contains(player.getName()))
+            return;
+
         for (EntityArmorStand entityArmorStand : this.armorStandMap.values()) {
             PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(entityArmorStand);
             (((CraftPlayer)player).getHandle()).playerConnection.sendPacket(packet);
@@ -98,9 +107,16 @@ public class PacketHologram {
             PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(entitySlime);
             (((CraftPlayer)player).getHandle()).playerConnection.sendPacket(packet);
         }
+
+        playersActualList.add(player.getName());
+        if(!playersGlobalList.contains(player.getName()))
+            playersGlobalList.add(player.getName());
     }
 
-    public void hide(Player player) {
+    public void hideTemporarly(Player player) {
+        if(!playersActualList.contains(player.getName()))
+            return;
+
         for (EntityArmorStand entityArmorStand : this.armorStandMap.values()) {
             PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entityArmorStand.getId());
             (((CraftPlayer)player).getHandle()).playerConnection.sendPacket(packet);
@@ -110,6 +126,26 @@ public class PacketHologram {
             PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entitySlime.getId());
             (((CraftPlayer)player).getHandle()).playerConnection.sendPacket(packet);
         }
+
+        playersActualList.remove(player.getName());
+    }
+
+    public void hide(Player player) {
+        if(!playersActualList.contains(player.getName()))
+            return;
+
+        for (EntityArmorStand entityArmorStand : this.armorStandMap.values()) {
+            PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entityArmorStand.getId());
+            (((CraftPlayer)player).getHandle()).playerConnection.sendPacket(packet);
+        }
+
+        for (EntitySlime entitySlime : this.slimeMap.values()) {
+            PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entitySlime.getId());
+            (((CraftPlayer)player).getHandle()).playerConnection.sendPacket(packet);
+        }
+
+        playersActualList.remove(player.getName());
+        playersGlobalList.remove(player.getName());
     }
 
     public void updateLine(int line, Player player){
@@ -184,6 +220,30 @@ public class PacketHologram {
      */
     public String getLine(int numberLine){
         return this.armorStandMap.get(numberLine).getCustomName();
+    }
+
+    /**
+     * Get the hologram's visibility cuboid.
+     * @return the cuboid in which the players see it.
+     */
+    public Cuboid getCuboid() {
+        return cuboid;
+    }
+
+    /**
+     * Get the list of players who'll see it.
+     * @return the list of users's name.
+     */
+    public List<String> getPlayers() {
+        return playersActualList;
+    }
+
+    /**
+     * Get the list of players who are able to see it.
+     * @return the list of all users who can see the hologram.
+     */
+    public List<String> getPlayersGlobalList() {
+        return playersGlobalList;
     }
 
     private void setIA(EntitySlime bukkitEntity, Boolean bool) {

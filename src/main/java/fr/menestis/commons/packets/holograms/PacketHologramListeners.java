@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,13 @@ public class PacketHologramListeners implements Listener, PacketListener {
     @EventHandler
     public void onJoin(PlayerJoinEvent playerJoinEvent){
         PacketHologramManager.getInstance().getHologramMap().values().stream().filter(PacketHologram::isGlobal).forEach(packetHologram -> packetHologram.show(playerJoinEvent.getPlayer()));
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent playerQuitEvent){
+        for (PacketHologram value : PacketHologramManager.getInstance().getHologramMap().values()) {
+            value.getPlayers().remove(playerQuitEvent.getPlayer().getName());
+        }
     }
 
     @EventHandler
