@@ -7,6 +7,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -89,6 +90,7 @@ public class VirtualScoreboard {
         sendPacket(player, createObjectPacket(2));
     }
 
+
     public void setLine(int line, String value) {
         if (line >= 0 && line < 15) {
             String oldValue = lines[line];
@@ -97,22 +99,18 @@ public class VirtualScoreboard {
             }
 
             lines[line] = value;
-
             VirtualTeam team = teamsLines[line];
+
+
 
             String prefix;
             String playerName;
             String suffix;
 
-            String[] parts = getParts(value);
-
-            if (parts[1].length() > 12) {
-                String firstPart = parts[1];
-                parts[1] = firstPart.concat(String.valueOf(firstPart.charAt(11)));
-            }
+            String[] parts = getParts(line, value);
 
             prefix = parts[0];
-            playerName = ChatColor.values()[line] + "§r" + parts[1];
+            playerName = parts[1];
             suffix = parts[2];
 
 
@@ -127,6 +125,7 @@ public class VirtualScoreboard {
                 setField(packet, "c", 15 - line);
                 setField(packet, "d", PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE);
                 sendPacket(player, packet);
+
                 return;
             }
 
@@ -239,82 +238,92 @@ public class VirtualScoreboard {
         return packet;
     }
 
-    private String[] getParts(String value) {
-        //    Fin Bordure : 20:00
 
-        if (value.length() <= 14) {
-            return new String[]{value, "", ""};
-        }
 
-        short currentState = 0;
-        String[] result = new String[]{"", "", ""};
+    private final List<String> stringList = new ArrayList<>();
 
-        boolean nextIsColor = false;
-        boolean isForceJump = false;
 
-        StringBuilder colorsBuffer = new StringBuilder();
-        StringBuilder stateBuffer = new StringBuilder();
+    public String[] getParts(int line, String value) {
+        String[] ret = new String[3];
+        if (value.length() <= 16) {
+            ret[0] = value;
+            ret[1] = getGood(line, getColorCode(value));
+            ret[2] = "";
 
-        String[] valueChars = value.codePoints().mapToObj(cp -> new String(Character.toChars(cp)))
-                .toArray(String[]::new);
+        } else {
+            String[] val = getGoodValues(value);
 
-        for (int index = 0; index < valueChars.length; index++) {
-            String currentChar = valueChars[index];
-            int currentStateMaxLength = STATE_LENGTH[currentState];
-            int estimatedLength = stateBuffer.length();
-
-            //  Check buffer length and go to next part if complete
-            if (estimatedLength >= currentStateMaxLength || isForceJump) {
-                isForceJump = false;
-                result[currentState] = stateBuffer.toString();
-                stateBuffer.setLength(0);
-                stateBuffer.append(colorsBuffer);
-                currentState += 1;
-
-                int remainingChars = valueChars.length - index;
-                int nextStateEstimatedLength = remainingChars + stateBuffer.length();
-                if (currentState == 1 && nextStateEstimatedLength <= 16) {
-                    return new String[]{result[0], "", stateBuffer + value.substring(index)};
-                }
-            }
-
-            // Prevent overflow by exiting loop
-            if (currentState > 2) {
-                break;
-            }
-
-            if (nextIsColor) {
-                nextIsColor = false;
-                if (isColor(currentChar)) {
-                    // Check if the state buffer was populated with old colors
-                    if (stateBuffer.toString().equals(colorsBuffer.toString())) {
-                        stateBuffer.setLength(0);
-                    }
-                    colorsBuffer.setLength(0);
-                }
-                if ("r".equals(currentChar)) {
-                    colorsBuffer.setLength(0);
-                } else {
-                    colorsBuffer.append("§").append(currentChar);
-                }
-                if (estimatedLength + 2 < currentStateMaxLength) {
-                    stateBuffer.append("§").append(currentChar);
-                } else {
-                    isForceJump = true;
-                }
-            } else if ("§".equals(currentChar)) {
-                nextIsColor = true;
-            } else {
-                stateBuffer.append(currentChar);
+            if (val.length == 2) {
+                ret[0] = val[0];
+                ret[1] = getGood(line, getColorCode(value.substring(0, 16)));
+                ret[2] = val[1];
+            } else if(val.length == 3) {
+                if (value.length() > 48)
+                    throw new IllegalArgumentException("Too long value ! Max 48 characters, value was " + value.length() + " !");
+                ret[0] = value.substring(0, 16);
+                ret[1] = (value.substring(16, 32));
+                ret[2] = value.substring(32);
             }
         }
 
-        if (currentState < 3 && stateBuffer.length() >= colorsBuffer.length()) {
-            result[currentState] = stateBuffer.toString();
-        }
-
-        return result;
+        return ret;
     }
+
+    private String getGood(int line, String finalColor){
+        String newColor = "§" + line;
+        String str = newColor + finalColor;
+        if (stringList.contains(str)){
+            int colorType = Integer.parseInt(newColor.replace("§", ""));
+            if((colorType + 1) >= 10){
+                return getGood(1, str);
+            } else {
+                return getGood(colorType + 1, finalColor);
+            }
+        }
+
+        stringList.add(str);
+        return str;
+    }
+
+
+    private String[] getGoodValues(String value) {
+        String[] ret;
+        String firstString = value.substring(0, 16);
+        String endString = value.substring(16);
+
+        String str = String.valueOf(firstString.charAt(firstString.length() - 1));
+        if(str.equals("§")){
+            firstString = firstString.substring(0, 15);
+            endString = "§" + endString;
+        }
+
+        if(value.length() <= 31){
+            ret = new String[2];
+            ret[1] = endString;
+        } else {
+            ret = new String[3];
+            ret[1] = "e";
+            ret[2] = "c";
+        }
+
+
+        ret[0] = firstString;
+
+        return ret;
+    }
+
+    private String getColorCode(String content){
+        if(!content.contains("§"))
+            return "§f";
+        else {
+            String[] result = content.split("§");
+            String ret = result[result.length - 1];
+            if (ret.length() > 1)
+                return "§" + ret.charAt(0);
+            return "§" + ret;
+        }
+    }
+
 
 
     public void reset() {
