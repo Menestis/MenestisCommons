@@ -4,7 +4,6 @@ import net.minecraft.server.v1_8_R3.IScoreboardCriteria;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardDisplayObjective;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardObjective;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -140,6 +139,8 @@ public class VirtualScoreboard {
             }
 
             if (!playerName.equals(oldPlayerName)) {
+                stringList.remove(oldPlayerName);
+
                 sendPacket(player, team.removePlayer(oldPlayerName));
                 sendPacket(player, team.addPlayer(playerName));
                 PacketPlayOutScoreboardScore packet = new PacketPlayOutScoreboardScore(playerName);
@@ -247,15 +248,15 @@ public class VirtualScoreboard {
         String[] ret = new String[3];
         if (value.length() <= 16) {
             ret[0] = value;
-            ret[1] = getGood(line, getColorCode(value));
+            ret[1] = getValidColorType(line, getColorCode(value));
             ret[2] = "";
 
         } else {
-            String[] val = getGoodValues(value);
+            String[] val = getGoodFormattedParts(value);
 
             if (val.length == 2) {
                 ret[0] = val[0];
-                ret[1] = getGood(line, getColorCode(value.substring(0, 16)));
+                ret[1] = getValidColorType(line, getColorCode(value.substring(0, 16)));
                 ret[2] = val[1];
             } else if(val.length == 3) {
                 if (value.length() > 48)
@@ -269,15 +270,15 @@ public class VirtualScoreboard {
         return ret;
     }
 
-    private String getGood(int line, String finalColor){
+    private String getValidColorType(int line, String finalColor){
         String newColor = "§" + line;
         String str = newColor + finalColor;
         if (stringList.contains(str)){
             int colorType = Integer.parseInt(newColor.replace("§", ""));
             if((colorType + 1) >= 10){
-                return getGood(1, str);
+                return getValidColorType(1, str);
             } else {
-                return getGood(colorType + 1, finalColor);
+                return getValidColorType(colorType + 1, finalColor);
             }
         }
 
@@ -286,7 +287,7 @@ public class VirtualScoreboard {
     }
 
 
-    private String[] getGoodValues(String value) {
+    private String[] getGoodFormattedParts(String value) {
         String[] ret;
         String firstString = value.substring(0, 16);
         String endString = value.substring(16);
