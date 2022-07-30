@@ -3,16 +3,11 @@ package fr.menestis.commons.packets.scoreboard;
 import org.bukkit.ChatColor;
 
 public class Scroller {
-    private int position;
-
     private final String str;
-
     private final String colorBefore;
-
     private final String colorAfter;
-
     private final String colorMid;
-
+    private int position;
     private ChatColor textColor;
 
     private boolean upperCaseMid;

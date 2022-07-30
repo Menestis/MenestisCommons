@@ -12,15 +12,15 @@ import java.util.UUID;
 public class ModListener implements Listener {
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent playerJoinEvent){
-        if(!ModerationManager.getInstance().getVanishPlayers().isEmpty()){
+    public void onJoin(PlayerJoinEvent playerJoinEvent) {
+        if (!ModerationManager.getInstance().getVanishPlayers().isEmpty()) {
             ModerationManager.getInstance().getVanishPlayers().forEach(uuid -> playerJoinEvent.getPlayer().hidePlayer(Bukkit.getPlayer(uuid)));
         }
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent playerQuitEvent){
-        if(ModerationManager.getInstance().getVanishPlayers().contains(playerQuitEvent.getPlayer().getUniqueId())){
+    public void onQuit(PlayerQuitEvent playerQuitEvent) {
+        if (ModerationManager.getInstance().getVanishPlayers().contains(playerQuitEvent.getPlayer().getUniqueId())) {
             UUID uuid = playerQuitEvent.getPlayer().getUniqueId();
 
             ModerationManager.getInstance().getUuidInventoryMap().remove(uuid);

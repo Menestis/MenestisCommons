@@ -15,6 +15,7 @@ import static fr.menestis.commons.packets.PacketUtils.setField;
 
 public class VirtualScoreboard {
     private final static int[] STATE_LENGTH = new int[]{16, 14, 16};
+    private final List<String> stringList = new ArrayList<>();
     private VirtualTeam[] teamsLines = new VirtualTeam[15];
     private String[] lines = new String[15];
     private Player player;
@@ -32,10 +33,6 @@ public class VirtualScoreboard {
         this.player = player;
         this.title = title;
         sendInitPackets();
-    }
-
-    private static boolean isColor(char c) {
-        return (c >= '1' && c <= '9') || (c >= 'a' && c <= 'f');
     }
 
     //   private String[] getParts(String value) {
@@ -71,6 +68,10 @@ public class VirtualScoreboard {
     //    return result;
     // }
 
+    private static boolean isColor(char c) {
+        return (c >= '1' && c <= '9') || (c >= 'a' && c <= 'f');
+    }
+
     private static boolean isColor(String c) {
         char[] valueChars = c.toCharArray();
         if (valueChars.length > 1) {
@@ -89,7 +90,6 @@ public class VirtualScoreboard {
         sendPacket(player, createObjectPacket(2));
     }
 
-
     public void setLine(int line, String value) {
         if (line >= 0 && line < 15) {
             String oldValue = lines[line];
@@ -99,7 +99,6 @@ public class VirtualScoreboard {
 
             lines[line] = value;
             VirtualTeam team = teamsLines[line];
-
 
 
             String prefix;
@@ -239,11 +238,6 @@ public class VirtualScoreboard {
         return packet;
     }
 
-
-
-    private final List<String> stringList = new ArrayList<>();
-
-
     public String[] getParts(int line, String value) {
         String[] ret = new String[3];
         if (value.length() <= 16) {
@@ -258,7 +252,7 @@ public class VirtualScoreboard {
                 ret[0] = val[0];
                 ret[1] = getValidColorType(line, getColorCode(value.substring(0, 16)));
                 ret[2] = val[1];
-            } else if(val.length == 3) {
+            } else if (val.length == 3) {
                 if (value.length() > 48)
                     throw new IllegalArgumentException("Too long value ! Max 48 characters, value was " + value.length() + " !");
                 ret[0] = value.substring(0, 16);
@@ -270,12 +264,12 @@ public class VirtualScoreboard {
         return ret;
     }
 
-    private String getValidColorType(int line, String finalColor){
+    private String getValidColorType(int line, String finalColor) {
         String newColor = "§" + line;
         String str = newColor + finalColor;
-        if (stringList.contains(str)){
+        if (stringList.contains(str)) {
             int colorType = Integer.parseInt(newColor.replace("§", ""));
-            if((colorType + 1) >= 10){
+            if ((colorType + 1) >= 10) {
                 return getValidColorType(1, str);
             } else {
                 return getValidColorType(colorType + 1, finalColor);
@@ -293,12 +287,12 @@ public class VirtualScoreboard {
         String endString = value.substring(16);
 
         String str = String.valueOf(firstString.charAt(firstString.length() - 1));
-        if(str.equals("§")){
+        if (str.equals("§")) {
             firstString = firstString.substring(0, 15);
             endString = "§" + endString;
         }
 
-        if(value.length() <= 31){
+        if (value.length() <= 31) {
             ret = new String[2];
             ret[1] = endString;
         } else {
@@ -313,8 +307,8 @@ public class VirtualScoreboard {
         return ret;
     }
 
-    private String getColorCode(String content){
-        if(!content.contains("§"))
+    private String getColorCode(String content) {
+        if (!content.contains("§"))
             return "§f";
         else {
             String[] result = content.split("§");
@@ -324,7 +318,6 @@ public class VirtualScoreboard {
             return "§" + ret;
         }
     }
-
 
 
     public void reset() {

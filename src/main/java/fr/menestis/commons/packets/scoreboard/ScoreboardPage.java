@@ -27,7 +27,7 @@ public class ScoreboardPage {
     }
 
 
-    public void setScroller(int line){
+    public void setScroller(int line) {
         this.lines.put(line, (aLong, player) -> "§8❯ §b" + scroller.next());
     }
 

@@ -15,15 +15,15 @@ public class ModCommand extends Command {
 
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        if(!commandSender.hasPermission("menestis.moderate")){
+        if (!commandSender.hasPermission("menestis.moderate")) {
             commandSender.sendMessage("§cVous n’avez pas la permission.");
             return true;
         }
 
-        if(strings.length == 0){
+        if (strings.length == 0) {
             Player player = ((Player) commandSender);
 
-            if(ModerationManager.getInstance().getVanishPlayers().contains(player.getUniqueId())){
+            if (ModerationManager.getInstance().getVanishPlayers().contains(player.getUniqueId())) {
                 ModerationManager.getInstance().getVanishPlayers().remove(player.getUniqueId());
                 Bukkit.getOnlinePlayers().forEach(player1 -> player.showPlayer(player));
                 player.setGameMode(GameMode.SURVIVAL);
@@ -43,7 +43,7 @@ public class ModCommand extends Command {
             }
 
             return false;
-        } else if(strings.length == 1){
+        } else if (strings.length == 1) {
             new CasierMainGui(strings[0]).open(((Player) commandSender));
             return false;
         }

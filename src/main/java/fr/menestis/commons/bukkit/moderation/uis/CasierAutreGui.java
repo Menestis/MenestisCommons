@@ -18,7 +18,7 @@ public class CasierAutreGui {
     private final String pseudo;
     private final KInventory kInventory = new KInventory(54, "§cModération");
 
-    public CasierAutreGui(String pseudo){
+    public CasierAutreGui(String pseudo) {
         this.pseudo = pseudo;
 
         List<Integer> list = new ArrayList<>(Arrays.asList(0, 1, 9, 7, 8, 17, 43, 44, 36, 35, 36, 37, 27));
@@ -33,20 +33,20 @@ public class CasierAutreGui {
         getItem("Hors-Règles", "out_of_rules", Material.EYE_OF_ENDER, 14);
     }
 
-    private void getItem(String displayName, String sanction_type, Material material, int slot){
+    private void getItem(String displayName, String sanction_type, Material material, int slot) {
         KItem kItem = new KItem(new ItemCreator(material).name("§8» §c" + displayName).lore("§7Vous permet de gérer §e" + this.pseudo, "", "§8» §bClique-Gauche §7pour appliquer cette sanction.", "§8» §bClique-Droit §7pour retirer cette sanction.").get());
         kItem.addCallback((kInventoryRepresentation, itemStack, player, kInventoryClickContext) -> {
             MagnetApi.MagnetStore.getApi().getPlayerHandle().getPlayerUUID(pseudo)
                     .thenCompose(uuid -> MagnetApi.MagnetStore.getApi().getPlayerHandle().sanctionPlayer(uuid, sanction_type, player.getUniqueId(), false))
                     .thenAccept(playerSanctionResult -> {
-                        if(playerSanctionResult == null){
+                        if (playerSanctionResult.getSanction() == null) {
                             player.sendMessage("§3§lMenestis §f» §cErreur : Vous ne pouvez pas sanctionner ce joueur car il subit déjà une sanction du même type.");
                             return;
                         }
 
                         String value = playerSanctionResult.getSanction().getValue();
                         player.sendMessage("§3§lMenestis §f» §7Vous avez sanctionné §e" + pseudo + " §8(§e" + value + "§8)");
-                        if(playerSanctionResult.getId() != null)
+                        if (playerSanctionResult.getId() != null)
                             player.sendMessage("§7ID de la sanction : " + playerSanctionResult.getId());
                     })
                     .exceptionally(throwable -> {
@@ -58,7 +58,7 @@ public class CasierAutreGui {
         this.kInventory.setElement(slot, kItem);
     }
 
-    public void open(Player player){
+    public void open(Player player) {
         this.kInventory.open(player);
     }
 

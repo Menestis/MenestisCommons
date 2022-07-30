@@ -28,8 +28,7 @@ public class CasierMainGui {
     private CasierAutreGui casierAutreGui;
 
 
-
-    public CasierMainGui(String pseudo){
+    public CasierMainGui(String pseudo) {
 
         this.pseudo = pseudo;
 
@@ -51,7 +50,7 @@ public class CasierMainGui {
         KItem viewItem = new KItem(new ItemCreator(Material.CHEST).name("§f» §cInventaire §f«").lore("", "§fVous permet d'accéder à l'§cinventaire", "§factuel du joueur.", "", Bukkit.getPlayer(pseudo) == null ? "§cImpossible: joueur déconnecté." : "§8➠ §7Cliquez pour voir son inventaire.").get());
         viewItem.addCallback((kInventoryRepresentation, itemStack, player, kInventoryClickContext) -> {
             Player target = Bukkit.getPlayer(pseudo);
-            if(target == null){
+            if (target == null) {
                 player.sendMessage("§c§lMod §f§l» §cAction impossible: ce joueur n'est pas en ligne.");
                 return;
             }
@@ -61,7 +60,7 @@ public class CasierMainGui {
 
         KItem kickItem = new KItem(new ItemCreator(Material.SIGN).name("§f» §cAutres §f«").lore("", "§fVous permet de gérer les autres", "§fcatégories du joueur.", "", "§8➠ §7Cliquez pour entamer la procédure.").get());
         kickItem.addCallback((kInventoryRepresentation, itemStack, player, kInventoryClickContext) -> {
-            if(casierAutreGui == null)
+            if (casierAutreGui == null)
                 this.casierAutreGui = new CasierAutreGui(this.pseudo);
             this.casierAutreGui.open(player);
         });
@@ -69,7 +68,7 @@ public class CasierMainGui {
 
         KItem banItem = new KItem(new ItemCreator(Material.ANVIL).name("§f» §cCombat §f«").lore("", "§fVous permet de gérer les combats", "§fdu joueur.", "", "§8➠ §7Cliquez pour entamer la procédure.").get());
         banItem.addCallback((kInventoryRepresentation, itemStack, player, kInventoryClickContext) -> {
-            if(casierCombatSanctionGui == null)
+            if (casierCombatSanctionGui == null)
                 this.casierCombatSanctionGui = new CasierCombatSanctionGui(this.pseudo);
             this.casierCombatSanctionGui.open(player);
         });
@@ -77,7 +76,7 @@ public class CasierMainGui {
 
         KItem muteItem = new KItem(new ItemCreator(Material.NAME_TAG).name("§f» §cMessages §f«").lore("", "§fVous permet de gérer les messages", "§fdu joueur.", "", "§8➠ §7Cliquez pour entamer la procédure.").get());
         muteItem.addCallback((kInventoryRepresentation, itemStack, player, kInventoryClickContext) -> {
-            if(casierMessageSanctionGui == null)
+            if (casierMessageSanctionGui == null)
                 this.casierMessageSanctionGui = new CasierMessageGui(this.pseudo);
             this.casierMessageSanctionGui.open(player);
         });
@@ -94,7 +93,7 @@ public class CasierMainGui {
         return pseudo;
     }
 
-    public void open(Player player){
+    public void open(Player player) {
         this.kInventory.open(player);
     }
 }

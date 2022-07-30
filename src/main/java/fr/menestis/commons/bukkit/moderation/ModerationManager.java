@@ -13,14 +13,14 @@ import java.util.*;
 public class ModerationManager {
 
     private static final ModerationManager instance = new ModerationManager();
+    private final List<UUID> vanishPlayers = new ArrayList<>();
+    private final Map<UUID, Location> uuidLocationMap = new HashMap<>();
+    private final Map<UUID, Inventory> uuidInventoryMap = new HashMap<>();
+    private JavaPlugin javaPlugin;
 
     public static ModerationManager getInstance() {
         return instance;
     }
-
-    private final List<UUID> vanishPlayers = new ArrayList<>();
-    private final Map<UUID, Location> uuidLocationMap = new HashMap<>();
-    private final Map<UUID, Inventory> uuidInventoryMap = new HashMap<>();
 
     public List<UUID> getVanishPlayers() {
         return vanishPlayers;
@@ -34,16 +34,15 @@ public class ModerationManager {
         return uuidLocationMap;
     }
 
-    private JavaPlugin javaPlugin;
-
-    public void init(JavaPlugin javaPlugin){
+    public void init(JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
 
         CommandUtils.registerCommand("mod", new ModCommand());
         Bukkit.getPluginManager().registerEvents(new ModListener(), javaPlugin);
 
+        //TODO for @Ariloxe : check power for /mod sanction and deny if power >= self power
 
-      //  MagnetApi.MagnetStore.getApi().getPlayerHandle()
+        //  MagnetApi.MagnetStore.getApi().getPlayerHandle()
 
     }
 
