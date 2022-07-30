@@ -1,6 +1,7 @@
 package fr.menestis.commons.bukkit.moderation.uis;
 
 import fr.blendman.magnet.api.MagnetApi;
+import fr.blendman.magnet.api.server.ServerCacheHandler;
 import fr.blendman974.kinventory.inventories.KInventory;
 import fr.blendman974.kinventory.inventories.KItem;
 import fr.menestis.commons.bukkit.ItemCreator;
@@ -37,27 +38,36 @@ public class CasierCombatSanctionGui {
         kItem.addCallback((kInventoryRepresentation, itemStack, player, kInventoryClickContext) -> {
             player.sendMessage("§3§lMenestis §f» §eRécupération du joueur...");
 
-            MagnetApi.MagnetStore.getApi().getPlayerHandle().getPlayerUUID(pseudo)
-                    .thenCompose(uuid -> MagnetApi.MagnetStore.getApi().getPlayerHandle().sanctionPlayer(uuid, sanction_type, player.getUniqueId(), false).exceptionally(throwable -> {
-                        throwable.printStackTrace();
-                        player.sendMessage("§3§lMenestis §f» §cUne erreur inconnue est survenue.");
-                        return null;
-                    }))
-                    .thenAccept(playerSanctionResult -> {
-                        if (playerSanctionResult.getSanction() == null) {
-                            player.sendMessage("§3§lMenestis §f» §cErreur : Vous ne pouvez pas sanctionner ce joueur car il subit déjà une sanction du même type.");
-                            return;
-                        }
+            MagnetApi.MagnetStore.getApi().getPlayerHandle().getPlayerInfo(pseudo).thenAccept(playerInfo -> {
+                if(playerInfo.getPower() >= ServerCacheHandler.ServerCacheHandlerStore.getServerCacheHandler().getInfo(player.getUniqueId()).getPower()){
+                    player.sendMessage("§3§lMenestis §f» §cErreur : Vous ne pouvez pas sanctionner un joueur ayant des permissions similaires ou supérieures à vous.");
+                    return;
+                }
 
-                        String value = playerSanctionResult.getSanction().getValue();
-                        player.sendMessage("§3§lMenestis §f» §7     Vous avez sanctionné §e" + pseudo + " §8(§e" + value + "§8)");
-                        if (playerSanctionResult.getId() != null)
-                            player.sendMessage("§7ID de la sanction : " + playerSanctionResult.getId());
-                    }).exceptionally(throwable -> {
-                        player.sendMessage("§3§lMenestis §f» §cUne erreur inconnue est survenue.");
-                        throwable.printStackTrace();
-                        return null;
-                    });
+
+                MagnetApi.MagnetStore.getApi().getPlayerHandle().getPlayerUUID(pseudo)
+                        .thenCompose(uuid -> MagnetApi.MagnetStore.getApi().getPlayerHandle().sanctionPlayer(uuid, sanction_type, player.getUniqueId(), false).exceptionally(throwable -> {
+                            throwable.printStackTrace();
+                            player.sendMessage("§3§lMenestis §f» §cUne erreur inconnue est survenue.");
+                            return null;
+                        }))
+                        .thenAccept(playerSanctionResult -> {
+                            if (playerSanctionResult.getSanction() == null) {
+                                player.sendMessage("§3§lMenestis §f» §cErreur : Vous ne pouvez pas sanctionner ce joueur car il subit déjà une sanction du même type.");
+                                return;
+                            }
+
+                            String value = playerSanctionResult.getSanction().getValue();
+                            player.sendMessage("§3§lMenestis §f» §7Vous avez sanctionné §e" + pseudo + " §8(§e" + value + "§8)");
+                            if (playerSanctionResult.getId() != null)
+                                player.sendMessage("§7ID de la sanction : " + playerSanctionResult.getId());
+                        }).exceptionally(throwable -> {
+                            player.sendMessage("§3§lMenestis §f» §cUne erreur inconnue est survenue.");
+                            throwable.printStackTrace();
+                            return null;
+                        });
+
+            });
         });
 
         this.kInventory.setElement(slot, kItem);
