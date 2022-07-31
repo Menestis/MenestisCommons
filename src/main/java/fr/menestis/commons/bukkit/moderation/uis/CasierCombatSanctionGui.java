@@ -16,7 +16,7 @@ import java.util.List;
 public class CasierCombatSanctionGui {
 
     private final String pseudo;
-    private final KInventory kInventory = new KInventory(54, "§cModération");
+    private final KInventory kInventory = new KInventory(54, "§8┃ §cModération §f(§cCombat§f)");
 
     public CasierCombatSanctionGui(String pseudo) {
         this.pseudo = pseudo;

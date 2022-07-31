@@ -40,8 +40,6 @@ public class ModerationManager {
         CommandUtils.registerCommand("mod", new ModCommand());
         Bukkit.getPluginManager().registerEvents(new ModListener(), javaPlugin);
 
-        //TODO for @Ariloxe : check power for /mod sanction and deny if power >= self power
-
         //  MagnetApi.MagnetStore.getApi().getPlayerHandle()
 
     }

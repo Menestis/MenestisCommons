@@ -26,7 +26,7 @@ public class CasierMessageGui {
     }};
 
     private final String pseudo;
-    private final KInventory kInventory = new KInventory(54, "§cModération");
+    private final KInventory kInventory = new KInventory(54, "§8┃ §cModération §f(§cMessages§f)");
 
     public CasierMessageGui(String pseudo) {
         this.pseudo = pseudo;

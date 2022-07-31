@@ -32,7 +32,7 @@ public class CasierMainGui {
 
         this.pseudo = pseudo;
 
-        this.kInventory = new KInventory(27, "§8┃ §cModération §f(§cPyralia§f)");
+        this.kInventory = new KInventory(27, "§8┃ §cModération §f(§c" + pseudo + "§f)");
 
         List<Integer> list = new ArrayList<>(Arrays.asList(0, 1, 9, 7, 8, 17, 43, 44, 36, 35, 36, 37, 27));
 
@@ -65,7 +65,6 @@ public class CasierMainGui {
             this.casierAutreGui.open(player);
         });
 
-
         KItem banItem = new KItem(new ItemCreator(Material.ANVIL).name("§f» §cCombat §f«").lore("", "§fVous permet de gérer les combats", "§fdu joueur.", "", "§8➠ §7Cliquez pour entamer la procédure.").get());
         banItem.addCallback((kInventoryRepresentation, itemStack, player, kInventoryClickContext) -> {
             if (casierCombatSanctionGui == null)
@@ -80,6 +79,7 @@ public class CasierMainGui {
                 this.casierMessageSanctionGui = new CasierMessageGui(this.pseudo);
             this.casierMessageSanctionGui.open(player);
         });
+
 
         this.kInventory.setElement(3, viewItem);
 
