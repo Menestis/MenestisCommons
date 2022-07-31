@@ -32,7 +32,7 @@ public class CasierMainGui {
 
         this.pseudo = pseudo;
 
-        this.kInventory = new KInventory(45, "§8┃ §cModération §f(§cPyralia§f)");
+        this.kInventory = new KInventory(27, "§8┃ §cModération §f(§cPyralia§f)");
 
         List<Integer> list = new ArrayList<>(Arrays.asList(0, 1, 9, 7, 8, 17, 43, 44, 36, 35, 36, 37, 27));
 
@@ -41,7 +41,7 @@ public class CasierMainGui {
 
         MagnetApi.MagnetStore.getApi().getPlayerHandle().getPlayerInfo(pseudo).thenAccept(playerInfo -> {
             KItem profileItem = new KItem(new ItemCreator(new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal())).owner(pseudo).name("§f(§c!§f) §c" + pseudo).lore("", "  §8• §fParamètres de Modération", "", "  §8• §" + (playerInfo.getBan() == null ? "cNon-banni(e)" : "aBanni(e)" + (playerInfo.getBan().getReason() == null ? "" : "(" + playerInfo.getBan().getReason() + ")"))).get());
-            this.kInventory.setElement(4, profileItem);
+            this.kInventory.setElement(5, profileItem);
         }).exceptionally(throwable -> {
             throwable.printStackTrace();
             return null;
@@ -81,11 +81,11 @@ public class CasierMainGui {
             this.casierMessageSanctionGui.open(player);
         });
 
-        this.kInventory.setElement(12, viewItem);
+        this.kInventory.setElement(3, viewItem);
 
-        this.kInventory.setElement(20, kickItem);
-        this.kInventory.setElement(22, banItem);
-        this.kInventory.setElement(24, muteItem);
+        this.kInventory.setElement(11, kickItem);
+        this.kInventory.setElement(13, banItem);
+        this.kInventory.setElement(15, muteItem);
 
     }
 

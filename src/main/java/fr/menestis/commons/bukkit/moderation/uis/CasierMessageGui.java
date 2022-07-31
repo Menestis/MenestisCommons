@@ -54,24 +54,34 @@ public class CasierMessageGui {
                     return;
                 }
 
+                if(kInventoryClickContext.getClickType().isLeftClick()){
+                    MagnetApi.MagnetStore.getApi().getPlayerHandle().getPlayerUUID(pseudo)
+                            .thenCompose(uuid -> MagnetApi.MagnetStore.getApi().getPlayerHandle().sanctionPlayer(uuid, sanction_type, player.getUniqueId(), false))
+                            .thenAccept(playerSanctionResult -> {
+                                if (playerSanctionResult.getSanction() == null) {
+                                    player.sendMessage("§3§lMenestis §f» §cErreur : Vous ne pouvez pas sanctionner ce joueur car il subit déjà une sanction du même type.");
+                                    return;
+                                }
 
-                MagnetApi.MagnetStore.getApi().getPlayerHandle().getPlayerUUID(pseudo)
-                        .thenCompose(uuid -> MagnetApi.MagnetStore.getApi().getPlayerHandle().sanctionPlayer(uuid, sanction_type, player.getUniqueId(), false))
-                        .thenAccept(playerSanctionResult -> {
-                            if (playerSanctionResult.getSanction() == null) {
-                                player.sendMessage("§3§lMenestis §f» §cErreur : Vous ne pouvez pas sanctionner ce joueur car il subit déjà une sanction du même type.");
-                                return;
-                            }
+                                String value = playerSanctionResult.getSanction().getValue();
+                                player.sendMessage("§3§lMenestis §f» §7Vous avez sanctionné §e" + pseudo + " §8(§e" + value + "§8)");
+                                if (playerSanctionResult.getId() != null)
+                                    player.sendMessage("§7ID de la sanction : " + playerSanctionResult.getId());
+                            }).exceptionally(throwable -> {
+                                throwable.printStackTrace();
+                                return null;
+                            });
+                } else if(kInventoryClickContext.getClickType().isRightClick()){
+                    MagnetApi.MagnetStore.getApi().getPlayerHandle().getPlayerUUID(pseudo)
+                            .thenCompose(uuid -> MagnetApi.MagnetStore.getApi().getPlayerHandle().sanctionPlayer(uuid, sanction_type, player.getUniqueId(), true))
+                            .thenAccept(playerSanctionResult -> {
+                                player.sendMessage("§3§lMenestis §f» §7Vous avez retiré la sanction de §e" + pseudo);
+                            }).exceptionally(throwable -> {
+                                throwable.printStackTrace();
+                                return null;
+                            });
+                }
 
-                            String value = playerSanctionResult.getSanction().getValue();
-                            player.sendMessage("§3§lMenestis §f» §7Vous avez sanctionné §e" + pseudo + " §8(§e" + value + "§8)");
-                            if (playerSanctionResult.getId() != null)
-                                player.sendMessage("§7ID de la sanction : " + playerSanctionResult.getId());
-                        })
-                        .exceptionally(throwable -> {
-                            throwable.printStackTrace();
-                            return null;
-                        });
             }).exceptionally(throwable -> {
                 throwable.printStackTrace();
                 return null;
