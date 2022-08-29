@@ -93,24 +93,17 @@ public class VirtualScoreboard {
     public void setLine(int line, String value) {
         if (line >= 0 && line < 15) {
             String oldValue = lines[line];
-            if (oldValue != null && oldValue.equals(value)) {
+            if (oldValue != null && oldValue.equals(value))
                 return;
-            }
 
             lines[line] = value;
             VirtualTeam team = teamsLines[line];
 
-
-            String prefix;
-            String playerName;
-            String suffix;
-
             String[] parts = getParts(line, value);
 
-            prefix = parts[0];
-            playerName = parts[1];
-            suffix = parts[2];
-
+            String prefix = parts[0];
+            String playerName = parts[1];
+            String suffix = parts[2];
 
             if (team == null) {
                 team = new VirtualTeam("_" + line);
@@ -268,12 +261,10 @@ public class VirtualScoreboard {
         String newColor = "§" + line;
         String str = newColor + finalColor;
         if (stringList.contains(str)) {
-            int colorType = Integer.parseInt(newColor.replace("§", ""));
-            if ((colorType + 1) >= 10) {
+            if ((line + 1) >= 10)
                 return getValidColorType(1, str);
-            } else {
-                return getValidColorType(colorType + 1, finalColor);
-            }
+            else
+                return getValidColorType(line + 1, finalColor);
         }
 
         stringList.add(str);
@@ -286,8 +277,8 @@ public class VirtualScoreboard {
         String firstString = value.substring(0, 16);
         String endString = value.substring(16);
 
-        String str = String.valueOf(firstString.charAt(firstString.length() - 1));
-        if (str.equals("§")) {
+        char str = firstString.charAt(firstString.length() - 1);
+        if (str == '§') {
             firstString = firstString.substring(0, 15);
             endString = "§" + endString;
         }
@@ -301,9 +292,7 @@ public class VirtualScoreboard {
             ret[2] = "c";
         }
 
-
         ret[0] = firstString;
-
         return ret;
     }
 
