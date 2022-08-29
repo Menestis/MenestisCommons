@@ -241,6 +241,8 @@ public class VirtualScoreboard {
         } else {
             String[] val = getGoodFormattedParts(value);
 
+            System.out.println("getParts : " + val);
+
             if (val.length == 2) {
                 ret[0] = val[0];
                 ret[1] = getValidColorType(line, getColorCode(value.substring(0, 16)));
@@ -259,12 +261,15 @@ public class VirtualScoreboard {
 
     private String getValidColorType(int line, String finalColor) {
         String newColor = "§" + line;
+
+        if (line >= 10)
+            return getValidColorType(1, finalColor);
+
         String str = newColor + finalColor;
         if (stringList.contains(str)) {
-            if ((line + 1) >= 10)
+            if(line + 1 >= 10)
                 return getValidColorType(1, str);
-            else
-                return getValidColorType(line + 1, finalColor);
+            return getValidColorType(line + 1, finalColor);
         }
 
         stringList.add(str);
