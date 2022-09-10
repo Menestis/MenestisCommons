@@ -50,7 +50,7 @@ public class CasierViewInventoryGui {
         kInventory.setElement(52, infoExp);
         kInventory.setElement(53, info);
 
-        KItem glass = new KItem(new ItemCreator(Material.STAINED_GLASS_PANE).name("§a").get());
+        KItem glass = new KItem(new ItemCreator(Material.STAINED_GLASS_PANE, 1, (short)14).name("§a").get());
 
         for (int i = 9; i < 18; i++)
             kInventory.setElement(i, glass);

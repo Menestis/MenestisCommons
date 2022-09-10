@@ -25,7 +25,7 @@ public class CasierAutreGui {
         List<Integer> list = new ArrayList<>(Arrays.asList(0, 1, 9, 7, 8, 17, 43, 44, 36, 35, 36, 37, 27));
 
         for (int vitre : list)
-            kInventory.setElement(vitre, new KItem(new ItemCreator(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).name("§c").get()));
+            kInventory.setElement(vitre, new KItem(new ItemCreator(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).name("§c").get()));
 
         getItem("Usebug", "usebug", Material.STONE_AXE, 10);
         getItem("Tower/Camp", "tower_camping", Material.COBBLESTONE, 11);

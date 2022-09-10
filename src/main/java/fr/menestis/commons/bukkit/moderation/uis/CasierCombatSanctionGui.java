@@ -24,7 +24,7 @@ public class CasierCombatSanctionGui {
         List<Integer> list = new ArrayList<>(Arrays.asList(0, 1, 9, 7, 8, 17, 43, 44, 36, 35, 36, 37, 27));
 
         for (int vitre : list)
-            kInventory.setElement(vitre, new KItem(new ItemCreator(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).name("§c").get()));
+            kInventory.setElement(vitre, new KItem(new ItemCreator(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).name("§c").get()));
 
         getItem("Triche", "cheating", Material.IRON_SWORD, 10);
         getItem("Contournement de Sanction", "sanction_evasion", Material.DIAMOND_SWORD, 11);

@@ -34,7 +34,7 @@ public class CasierMessageGui {
         List<Integer> list = new ArrayList<>(Arrays.asList(0, 1, 9, 7, 8, 17, 43, 44, 36, 35, 36, 37, 27));
 
         for (int vitre : list)
-            kInventory.setElement(vitre, new KItem(new ItemCreator(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).name("§c").get()));
+            kInventory.setElement(vitre, new KItem(new ItemCreator(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).name("§c").get()));
 
         getItem("Langage/Flood", "lanquage_flood", Material.PAPER, 10);
         getItem("Insultes/Provocation", "swearing_taunting", Material.BOOK, 11);

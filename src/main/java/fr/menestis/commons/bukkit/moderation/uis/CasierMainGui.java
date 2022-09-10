@@ -32,15 +32,15 @@ public class CasierMainGui {
 
         this.pseudo = pseudo;
 
-        this.kInventory = new KInventory(27, "§8┃ §cModération §f(§c" + pseudo + "§f)");
+        this.kInventory = new KInventory(54, "§8┃ §cModération §f(§c" + pseudo + "§f)");
 
         List<Integer> list = new ArrayList<>(Arrays.asList(0, 1, 9, 7, 8, 17, 43, 44, 36, 35, 36, 37, 27));
 
         for (int vitre : list)
-            kInventory.setElement(vitre, new KItem(new ItemCreator(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).name("§c").get()));
+            kInventory.setElement(vitre, new KItem(new ItemCreator(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14)).name("§c").get()));
 
         MagnetApi.MagnetStore.getApi().getPlayerHandle().getPlayerInfo(pseudo).thenAccept(playerInfo -> {
-            KItem profileItem = new KItem(new ItemCreator(new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal())).owner(pseudo).name("§f(§c!§f) §c" + pseudo).lore("", "  §8• §fParamètres de Modération", "", "  §8• §" + (playerInfo.getBan() == null ? "cNon-banni(e)" : "aBanni(e)" + (playerInfo.getBan().getReason() == null ? "" : "(" + playerInfo.getBan().getReason() + ")"))).get());
+            KItem profileItem = new KItem(new ItemCreator(new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal())).owner(pseudo).name("§f(§c!§f) §c" + pseudo).lore("", "  §8• §fParamètres de Modération", "", "  §8• §" + (playerInfo.getBan() == null ? "cNon-banni(e)" : "aBanni(e)" + (playerInfo.getBan().getReason() == null ? "" : " §7(" + playerInfo.getBan().getReason() + ")"))).get());
             this.kInventory.setElement(5, profileItem);
         }).exceptionally(throwable -> {
             throwable.printStackTrace();
