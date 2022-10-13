@@ -241,8 +241,6 @@ public class VirtualScoreboard {
         } else {
             String[] val = getGoodFormattedParts(value);
 
-            System.out.println("getParts : " + val);
-
             if (val.length == 2) {
                 ret[0] = val[0];
                 ret[1] = getValidColorType(line, getColorCode(value.substring(0, 16)));
