@@ -16,9 +16,9 @@
 
     <distributionManagement>
         <repository>
-            <id>aspaku</id>
-            <name>Aspaku Maven</name>
-            <url>https://nexus.aspaku.com/repository/maven/</url>
+            <id>UndefinedDev</id>
+            <name>Undefined Dev</name>
+            <url>https://nexus.undefined-dev.fr/repository/maven/</url>
         </repository>
     </distributionManagement>
 
@@ -28,8 +28,8 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>aspaku</id>
-            <url>https://nexus.aspaku.com/repository/maven/</url>
+            <id>UndefinedDev</id>
+            <url>https://nexus.undefined-dev.fr/repository/maven/</url>
         </repository>
     </repositories>
 
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>fr.blendman974</groupId>
             <artifactId>magnet-api</artifactId>
-            <version>0.1</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>fr.blendman974</groupId>
